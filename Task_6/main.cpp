@@ -5,12 +5,12 @@
 //https://contest.yandex.ru/contest/36361/run-report/67905162/
 
 struct Vertex {
-    int vert_u;
-    int edge_length;
+    int vert_u = 0;
+    int edge_length = 0;
 };
 
 struct VertexGreater {
-    bool operator()(Vertex &a, Vertex &b) {
+    bool operator()(const Vertex &a,const Vertex &b) {
         return a.edge_length > b.edge_length;
     }
 };
@@ -18,12 +18,8 @@ struct VertexGreater {
 int Prim(const std::vector<std::vector<Vertex>> &graph,const int &n) {
     std::priority_queue<Vertex, std::vector<Vertex>, VertexGreater> que;
     std::vector<bool> visited(n);
-    visited[0] = true;
-    for (auto elem: graph[0]) {
-        if(!visited[elem.vert_u]) {
-            que.push(elem);
-        }
-    }
+    Vertex s;
+	que.push(s);
     int res = 0;
     while (!que.empty()) {
         Vertex top = que.top();
@@ -50,10 +46,10 @@ int main() {
         Vertex v;
         std::cin >> j >> k >> l;
         --j;--k;
-        v.vert_u=k;
-        v.edge_length=l;
+        v.vert_u = k;
+        v.edge_length = l;
         graph[j].push_back(v);
-        v.vert_u=j;
+        v.vert_u = j;
         graph[k].push_back(v);
     }
     std::cout << Prim(graph, n);
