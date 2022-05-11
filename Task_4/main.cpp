@@ -1,34 +1,43 @@
 #include <iostream>
 #include <vector>
-#include <queue>
+#include <set>
+#include <limits>
 
-//https://contest.yandex.ru/contest/36361/run-report/67605228/
+//https://contest.yandex.ru/contest/36361/run-report/68332151/
 
 struct Edge {
     int Vertex = 0;
     int Weight = 0;
 };
 
-std::vector<int> Dijkstra(const std::vector<std::vector<Edge>>& graph, int start) {
-    std::vector<int> distance(graph.size(), INT32_MAX);
-    std::vector<bool> visited(graph.size(), false);
-    std::priority_queue<std::pair<int, int>,std::vector<std::pair<int,int>>,std::greater<>> que;
-    que.push({0, start});
-    distance[start]=0;
-    while (!que.empty()) {
-        int vert = que.top().second;
-        que.pop();
-        if (visited[vert]) continue;
-        visited[vert] = true;
-        for (auto elem: graph[vert]) {
-            if (distance[vert] + elem.Weight < distance[elem.Vertex]) {
-                distance[elem.Vertex] = distance[vert] + elem.Weight;
-                que.push({distance[elem.Vertex], elem.Vertex});
-            }
-        }
+int Dijkstra(const std::vector<std::vector<Edge>>& graph, int s, int f) {
+                               
+  std::vector<int> distance(graph.size(), std::numeric_limits<int>::max());
+  std::set<std::pair<int, int>> q;
+
+  q.insert({0, s});
+  distance[s] = 0;
+  while (!q.empty()) {
+    auto it = q.begin();
+    int u = it->second;
+    q.erase(it);
+ 
+    for (auto e : graph[u]) {
+      int v = e.Vertex;
+      if (distance[u] + e.Weight < distance[v]) {
+        auto it_v = q.find({distance[v], v});
+      if (it_v != q.end()) {
+      	q.erase(it_v);
+      }
+ 
+        distance[v] = distance[u] + e.Weight;
+        q.insert({distance[v], v});
+      }
     }
-    return distance;
+  }
+  return distance[f];
 }
+
 
 int main() {
     int v = 0, e = 0;
@@ -42,6 +51,6 @@ int main() {
     }
     int s = 0, f = 0;
     std::cin >> s >> f;
-    std::cout<<Dijkstra(graph,s)[f];
+    std::cout << Dijkstra(graph,s,f);
     return 0;
 }
